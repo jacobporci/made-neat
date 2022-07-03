@@ -1,7 +1,8 @@
 export default function Search() {
   return (
     <div>
-      <h1>Search</h1>
+      <label htmlFor="search">Search:&nbsp;</label>
+      <input id="search" type="search" />
     </div>
   );
 }
