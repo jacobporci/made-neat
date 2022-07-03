@@ -1,5 +1,7 @@
+import { QueryParams } from "../../pages";
+
 type Props = {
-  onSearch: (searchKey: string) => void;
+  onSearch: (params: QueryParams) => void;
   searchKey: string;
 };
 
@@ -18,7 +20,7 @@ const debounce = (func: Function, delay: number, { leading }: any = {}) => {
 
 export default function Search({ onSearch, searchKey }: Props) {
   const handleSearch = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch(e.target.value);
+    onSearch({ searchKey: e.target.value });
   }, 500);
 
   return (

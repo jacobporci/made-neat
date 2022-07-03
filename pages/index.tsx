@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "../components/pagination/pagination";
 import Search from "../components/search/search";
 import Table from "../components/table/table";
@@ -9,7 +9,7 @@ import styles from "../styles/Home.module.css";
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_PAGE = 1;
 const DEFAULT_SEARCH_KEY = "Apple";
-const API_KEY = "8171aba6f9fc48a29fada6fead638dce";
+const API_KEY = "745863a9d5df450e9a0e3831cfa4ac2c";
 
 type Articles = {
   source: Object;
@@ -27,14 +27,15 @@ export type StrippedArticle = Pick<
   "author" | "title" | "publishedAt"
 >;
 
-type Props = {
-  articles: Array<StrippedArticle>;
+export type QueryParams = {
+  page?: number;
+  pageSize?: number;
+  searchKey?: string;
 };
 
-type QueryParams = {
-  page: number;
-  pageSize?: number;
-  searchKey: string;
+type Props = {
+  articles: Array<StrippedArticle>;
+  totalResults: number;
 };
 
 const getArticles = async ({ page, pageSize, searchKey }: QueryParams) => {
@@ -43,7 +44,7 @@ const getArticles = async ({ page, pageSize, searchKey }: QueryParams) => {
   );
   const data = await response.json();
   console.log({ data });
-  const { articles } = data;
+  const { articles, totalResults } = data;
   const strippedOutArticles = articles
     ? articles.map(({ author, title, publishedAt }: Articles) => ({
         author,
@@ -52,33 +53,36 @@ const getArticles = async ({ page, pageSize, searchKey }: QueryParams) => {
       }))
     : [];
 
-  return strippedOutArticles;
+  return { articles: strippedOutArticles, totalResults };
 };
 
 const Home: NextPage<Props> = (props) => {
   const [articles, setArticles] = useState(props.articles);
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [searchKey, setsearchKey] = useState(DEFAULT_SEARCH_KEY);
+  const [searchKey, setSearchKey] = useState(DEFAULT_SEARCH_KEY);
+  const [totalResults, setTotalResults] = useState(props.totalResults);
 
-  const handlePageChange = async (page: number) => {
-    const articles = await getArticles({ page, pageSize, searchKey });
+  const handlePaginationChange = async (params: QueryParams) => {
+    const queryParams = {
+      page: params.page || currPage,
+      pageSize: params.pageSize || pageSize,
+      searchKey: params.searchKey || searchKey,
+    };
+
+    const { articles, totalResults } = await getArticles(queryParams);
+
     setArticles(articles);
-    setCurrPage(page);
+    setTotalResults(totalResults);
+
+    setCurrPage(queryParams.page);
+    setPageSize(queryParams.pageSize);
+    setSearchKey(queryParams.searchKey);
   };
 
-  const handlePageSizeChange = async (pageSize: number) => {
-    const articles = await getArticles({ page: currPage, pageSize, searchKey });
-    setArticles(articles);
-    setPageSize(pageSize);
-  };
-
-  const hanldeSearch = async (searchKey: string) => {
-    console.log({ searchKey });
-    const articles = await getArticles({ page: currPage, pageSize, searchKey });
-    setArticles(articles);
-    setPageSize(pageSize);
-  };
+  useEffect(() => {
+    if (!totalResults) setCurrPage(1);
+  }, [totalResults]);
 
   return (
     <div className={styles.container}>
@@ -88,12 +92,13 @@ const Home: NextPage<Props> = (props) => {
       </Head>
 
       <main className={styles.main}>
-        <Search onSearch={hanldeSearch} searchKey={searchKey} />
+        <Search onSearch={handlePaginationChange} searchKey={searchKey} />
         <Table items={articles} />
         <Pagination
           currPage={currPage}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
+          onPaginationChange={handlePaginationChange}
+          lastPage={totalResults / pageSize}
+          hasNoArticles={!totalResults}
         />
       </main>
     </div>
@@ -101,13 +106,16 @@ const Home: NextPage<Props> = (props) => {
 };
 
 export const getStaticProps = async () => {
+  const { articles, totalResults } = await getArticles({
+    page: DEFAULT_PAGE,
+    pageSize: DEFAULT_PAGE_SIZE,
+    searchKey: DEFAULT_SEARCH_KEY,
+  });
+
   return {
     props: {
-      articles: await getArticles({
-        page: DEFAULT_PAGE,
-        pageSize: DEFAULT_PAGE_SIZE,
-        searchKey: DEFAULT_SEARCH_KEY,
-      }),
+      articles,
+      totalResults,
     },
   };
 };
