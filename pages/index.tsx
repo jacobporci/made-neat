@@ -1,9 +1,13 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import { useState } from "react";
 import Pagination from "../components/pagination/pagination";
 import Search from "../components/search/search";
 import Table from "../components/table/table";
 import styles from "../styles/Home.module.css";
+
+const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE = 1;
 
 type Articles = {
   source: Object;
@@ -25,27 +29,17 @@ type Props = {
   articles: Array<StrippedArticle>;
 };
 
-const Home: NextPage<Props> = ({ articles }) => {
-  return (
-    <div className={styles.container}>
-      <Head>
-        <title>Made Neat</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <Search />
-        <Table items={articles} />
-        <Pagination />
-      </main>
-    </div>
-  );
+type QueryParams = {
+  page: number;
+  pageSize?: number;
 };
 
-export const getStaticProps = async () => {
-  const pageSize = 10;
+const getArticles = async ({
+  page,
+  pageSize = DEFAULT_PAGE_SIZE,
+}: QueryParams) => {
   const reponse = await fetch(
-    `https://newsapi.org/v2/everything?q=Apple&sortBy=popularity&pageSize=${pageSize}&apiKey=bf84d7431fa646c8922231ab4935ad89`
+    `https://newsapi.org/v2/everything?apiKey=bf84d7431fa646c8922231ab4935ad89&q=Apple&sortBy=popularity&page=${page}&pageSize=${pageSize}`
   );
   const { articles } = await reponse.json();
   const strippedOutArticles = articles.map(
@@ -56,7 +50,44 @@ export const getStaticProps = async () => {
     })
   );
 
-  return { props: { articles: strippedOutArticles } };
+  return strippedOutArticles;
+};
+
+const Home: NextPage<Props> = (props) => {
+  const [articles, setArticles] = useState(props.articles);
+  const [currPage, setCurrPage] = useState(DEFAULT_PAGE);
+
+  const handlePageChange = async (page: number) => {
+    const articles = await getArticles({ page });
+    setArticles(articles);
+    setCurrPage(page);
+  };
+
+  return (
+    <div className={styles.container}>
+      <Head>
+        <title>Made Neat Task</title>
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+
+      <main className={styles.main}>
+        <Search />
+        <Table items={articles} />
+        <Pagination currPage={currPage} onPageChange={handlePageChange} />
+      </main>
+    </div>
+  );
+};
+
+export const getStaticProps = async () => {
+  return {
+    props: {
+      articles: await getArticles({
+        page: DEFAULT_PAGE,
+        pageSize: DEFAULT_PAGE_SIZE,
+      }),
+    },
+  };
 };
 
 export default Home;
