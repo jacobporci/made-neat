@@ -34,10 +34,7 @@ type QueryParams = {
   pageSize?: number;
 };
 
-const getArticles = async ({
-  page,
-  pageSize = DEFAULT_PAGE_SIZE,
-}: QueryParams) => {
+const getArticles = async ({ page, pageSize }: QueryParams) => {
   const reponse = await fetch(
     `https://newsapi.org/v2/everything?apiKey=bf84d7431fa646c8922231ab4935ad89&q=Apple&sortBy=popularity&page=${page}&pageSize=${pageSize}`
   );
@@ -56,11 +53,18 @@ const getArticles = async ({
 const Home: NextPage<Props> = (props) => {
   const [articles, setArticles] = useState(props.articles);
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE);
+  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
 
   const handlePageChange = async (page: number) => {
-    const articles = await getArticles({ page });
+    const articles = await getArticles({ page, pageSize });
     setArticles(articles);
     setCurrPage(page);
+  };
+
+  const handlePageSizeChange = async (pageSize: number) => {
+    const articles = await getArticles({ page: currPage, pageSize });
+    setArticles(articles);
+    setPageSize(pageSize);
   };
 
   return (
@@ -73,7 +77,11 @@ const Home: NextPage<Props> = (props) => {
       <main className={styles.main}>
         <Search />
         <Table items={articles} />
-        <Pagination currPage={currPage} onPageChange={handlePageChange} />
+        <Pagination
+          currPage={currPage}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
       </main>
     </div>
   );

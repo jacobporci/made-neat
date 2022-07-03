@@ -6,9 +6,14 @@ const DEFAULT_OPTIONS = [10, 20, 30, 40, 50];
 type Props = {
   currPage: number;
   onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
 };
 
-export default function Pagination({ currPage, onPageChange }: Props) {
+export default function Pagination({
+  currPage,
+  onPageChange,
+  onPageSizeChange,
+}: Props) {
   return (
     <div className={styles.container}>
       <div className={styles.pagination}>
@@ -17,7 +22,10 @@ export default function Pagination({ currPage, onPageChange }: Props) {
         <button onClick={() => onPageChange(currPage + 1)}>{">>"}</button>
       </div>
       <label htmlFor="items-per-page">Items per page:&nbsp;</label>
-      <select id="items-per-page">
+      <select
+        id="items-per-page"
+        onChange={(e) => onPageSizeChange(parseInt(e.target.value))}
+      >
         {DEFAULT_OPTIONS.map((option) => (
           <option key={option} value={option}>
             {option}
