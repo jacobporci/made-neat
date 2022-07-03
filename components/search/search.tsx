@@ -1,4 +1,5 @@
 import { QueryParams } from "../../pages";
+import styles from "./search.module.css";
 
 type Props = {
   onSearch: (params: QueryParams) => void;
@@ -20,13 +21,14 @@ const debounce = (func: Function, delay: number, { leading }: any = {}) => {
 
 export default function Search({ onSearch, searchKey }: Props) {
   const handleSearch = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch({ searchKey: e.target.value });
+    onSearch({ searchKey: e.target.value, page: 1, pageSize: 10 });
   }, 500);
 
   return (
-    <div>
-      <label htmlFor="search">Search:&nbsp;</label>
+    <div className={styles.container}>
+      <label htmlFor="search">News Title Search:&nbsp;</label>
       <input
+        className={styles.search}
         id="search"
         type="search"
         onChange={handleSearch}

@@ -1,10 +1,9 @@
 import type { NextPage } from "next";
-import Head from "next/head";
 import { useEffect, useState } from "react";
+import Layout from "../components/layout";
 import Pagination from "../components/pagination/pagination";
 import Search from "../components/search/search";
 import Table from "../components/table/table";
-import styles from "../styles/Home.module.css";
 
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_PAGE = 1;
@@ -42,9 +41,7 @@ const getArticles = async ({ page, pageSize, searchKey }: QueryParams) => {
   const response = await fetch(
     `https://newsapi.org/v2/everything?apiKey=${API_KEY}&searchIn=title&q=${searchKey}&sortBy=popularity&page=${page}&pageSize=${pageSize}`
   );
-  const data = await response.json();
-  console.log({ data });
-  const { articles, totalResults } = data;
+  const { articles, totalResults } = await response.json();
   const strippedOutArticles = articles
     ? articles.map(({ author, title, publishedAt }: Articles) => ({
         author,
@@ -85,13 +82,8 @@ const Home: NextPage<Props> = (props) => {
   }, [totalResults]);
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Made Neat Task</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
+    <Layout>
+      <>
         <Search onSearch={handlePaginationChange} searchKey={searchKey} />
         <Table items={articles} />
         <Pagination
@@ -100,8 +92,8 @@ const Home: NextPage<Props> = (props) => {
           lastPage={totalResults / pageSize}
           hasNoArticles={!totalResults}
         />
-      </main>
-    </div>
+      </>
+    </Layout>
   );
 };
 

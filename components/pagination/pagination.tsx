@@ -29,7 +29,7 @@ export default function Pagination({
         <div className={styles.currentPage}>{currPage}</div>
         <button
           onClick={() => onPaginationChange({ page: currPage + 1 })}
-          disabled={hasNoArticles || currPage === lastPage}
+          disabled={hasNoArticles || currPage >= lastPage}
         >
           {">>"}
         </button>

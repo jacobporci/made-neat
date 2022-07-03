@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { StrippedArticle } from "../../pages";
+import styles from "./table.module.css";
 
 type SortHeaderProps = {
   header: string;
@@ -34,46 +35,49 @@ export default function Table({ items }: Props) {
   };
 
   return (
-    <table>
+    <table className={styles.table}>
       <thead>
         <tr>
-          {items.length
-            ? Object.keys(items[0]).map((item) => {
-                const isSorted = sortKey === item;
+          {items.length ? (
+            Object.keys(items[0]).map((item) => {
+              const isSorted = sortKey === item;
 
-                return (
-                  <th key={item}>
-                    <button
-                      onClick={() => {
-                        handleSorting(
-                          item as keyof StrippedArticle,
-                          isSorted && sortOrder === "asc"
-                        );
-                        setSortOrder(
-                          isSorted && sortOrder === "asc" ? "desc" : "asc"
-                        );
-                      }}
-                      style={{
-                        textTransform: "capitalize",
-                        display: "flex",
-                        alignItems: "center",
-                      }}
-                    >
-                      {`${item} ${
-                        isSorted ? (sortOrder === "asc" ? " ▼" : " ▲") : ""
-                      }`}
-                    </button>
-                  </th>
-                );
-              })
-            : null}
+              return (
+                <th key={item}>
+                  <button
+                    className={styles.headers}
+                    onClick={() => {
+                      handleSorting(
+                        item as keyof StrippedArticle,
+                        isSorted && sortOrder === "asc"
+                      );
+                      setSortOrder(
+                        isSorted && sortOrder === "asc" ? "desc" : "asc"
+                      );
+                    }}
+                    style={{
+                      textTransform: "capitalize",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    {`${item} ${
+                      isSorted ? (sortOrder === "asc" ? " ▼" : " ▲") : ""
+                    }`}
+                  </button>
+                </th>
+              );
+            })
+          ) : (
+            <h2>No content</h2>
+          )}
         </tr>
       </thead>
       <tbody>
         {sortedItems?.map(({ author, title, publishedAt }) => {
           return (
-            <tr key={publishedAt}>
-              <td>{author}</td>
+            <tr className={styles.rows} key={publishedAt}>
+              <td>{author || "Anonymous"}</td>
               <td>{title}</td>
               <td>{publishedAt}</td>
             </tr>
