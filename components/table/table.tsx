@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { StrippedArticle } from "../../pages";
 
 type SortHeaderProps = {
@@ -12,8 +12,14 @@ type Props = {
 
 export default function Table({ items }: Props) {
   const [sortedItems, setSortedItems] = useState(items);
-  const [sortKey, setSortKey] = useState<keyof StrippedArticle>();
+  const [sortKey, setSortKey] = useState<keyof StrippedArticle | null>();
   const [sortOrder, setSortOrder] = useState("asc");
+
+  useEffect(() => {
+    setSortedItems(items);
+    setSortKey(null);
+    setSortOrder("asc");
+  }, [items]);
 
   const handleSorting = (sortKey: keyof StrippedArticle, reverse: boolean) => {
     setSortKey(sortKey);
@@ -31,34 +37,36 @@ export default function Table({ items }: Props) {
     <table>
       <thead>
         <tr>
-          {Object.keys(items[0]).map((item) => {
-            const isSorted = sortKey === item;
+          {items.length
+            ? Object.keys(items[0]).map((item) => {
+                const isSorted = sortKey === item;
 
-            return (
-              <th key={item}>
-                <button
-                  onClick={() => {
-                    handleSorting(
-                      item as keyof StrippedArticle,
-                      isSorted && sortOrder === "asc"
-                    );
-                    setSortOrder(
-                      isSorted && sortOrder === "asc" ? "desc" : "asc"
-                    );
-                  }}
-                  style={{
-                    textTransform: "capitalize",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  {`${item} ${
-                    isSorted ? (sortOrder === "asc" ? " ▼" : " ▲") : ""
-                  }`}
-                </button>
-              </th>
-            );
-          })}
+                return (
+                  <th key={item}>
+                    <button
+                      onClick={() => {
+                        handleSorting(
+                          item as keyof StrippedArticle,
+                          isSorted && sortOrder === "asc"
+                        );
+                        setSortOrder(
+                          isSorted && sortOrder === "asc" ? "desc" : "asc"
+                        );
+                      }}
+                      style={{
+                        textTransform: "capitalize",
+                        display: "flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      {`${item} ${
+                        isSorted ? (sortOrder === "asc" ? " ▼" : " ▲") : ""
+                      }`}
+                    </button>
+                  </th>
+                );
+              })
+            : null}
         </tr>
       </thead>
       <tbody>
