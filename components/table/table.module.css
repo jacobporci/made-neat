@@ -23,6 +23,7 @@
 	outline: inherit;
 
 	width: 100%;
+	padding-left: 0.5rem;
 }
 
 .sorter {
@@ -37,4 +38,5 @@
 
 .cell {
 	border: 1px solid black;
+	padding-left: 0.5rem;
 }

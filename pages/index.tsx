@@ -4,53 +4,17 @@ import Layout from "../components/layout";
 import Pagination from "../components/pagination/pagination";
 import Search from "../components/search/search";
 import Table from "../components/table/table";
-
-const DEFAULT_PAGE_SIZE = 10;
-const DEFAULT_PAGE = 1;
-const DEFAULT_SEARCH_KEY = "Apple";
-const API_KEY = "745863a9d5df450e9a0e3831cfa4ac2c";
-
-type Articles = {
-  source: Object;
-  author: string;
-  title: string;
-  description: string;
-  url: string;
-  urlToImage: string;
-  publishedAt: string;
-  content: string;
-};
-
-export type StrippedArticle = Pick<
-  Articles,
-  "author" | "title" | "publishedAt"
->;
-
-export type QueryParams = {
-  page?: number;
-  pageSize?: number;
-  searchKey?: string;
-};
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PAGE_SIZE,
+  DEFAULT_SEARCH_KEY,
+} from "../utils/constants";
+import { getArticles } from "../utils/utils";
+import { QueryParams, StrippedArticle } from "./types";
 
 type Props = {
   articles: Array<StrippedArticle>;
   totalResults: number;
-};
-
-const getArticles = async ({ page, pageSize, searchKey }: QueryParams) => {
-  const response = await fetch(
-    `https://newsapi.org/v2/everything?apiKey=${API_KEY}&searchIn=title&q=${searchKey}&sortBy=popularity&page=${page}&pageSize=${pageSize}`
-  );
-  const { articles, totalResults } = await response.json();
-  const strippedOutArticles = articles
-    ? articles.map(({ author, title, publishedAt }: Articles) => ({
-        author,
-        title,
-        publishedAt,
-      }))
-    : [];
-
-  return { articles: strippedOutArticles, totalResults };
 };
 
 const Home: NextPage<Props> = (props) => {

@@ -1,4 +1,4 @@
-import { QueryParams } from "../../pages";
+import { QueryParams } from "../../pages/types";
 import styles from "./search.module.css";
 
 type Props = {
@@ -26,13 +26,16 @@ export default function Search({ onSearch, searchKey }: Props) {
 
   return (
     <div className={styles.container}>
-      <label htmlFor="search">News Title Search:&nbsp;</label>
+      <label className={styles.label} htmlFor="search">
+        News Title Search:&nbsp;
+      </label>
       <input
         className={styles.search}
         id="search"
         type="search"
         onChange={handleSearch}
         defaultValue={searchKey}
+        placeholder="Search for news title"
       />
     </div>
   );

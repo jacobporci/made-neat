@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StrippedArticle } from "../../pages";
+import { StrippedArticle } from "../../pages/types";
 import styles from "./table.module.css";
 
 type SortHeaderProps = {
@@ -78,11 +78,17 @@ export default function Table({ items }: Props) {
       </thead>
       <tbody>
         {sortedItems?.map(({ author, title, publishedAt }) => {
+          const date = new Date(publishedAt).toLocaleString("en-AU", {
+            timeZone: "Australia/Sydney",
+            dateStyle: "medium",
+            timeStyle: "short",
+          });
+
           return (
             <tr className={styles.rows} key={publishedAt}>
               <td className={styles.cell}>{author || "Anonymous"}</td>
               <td className={styles.cell}>{title}</td>
-              <td className={styles.cell}>{publishedAt}</td>
+              <td className={styles.cell}>{date}</td>
             </tr>
           );
         })}

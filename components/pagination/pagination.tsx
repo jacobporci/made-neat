@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { QueryParams } from "../../pages";
+import { QueryParams } from "../../pages/types";
 import styles from "./pagination.module.css";
 
 const DEFAULT_OPTIONS = [10, 20, 30, 40, 50];

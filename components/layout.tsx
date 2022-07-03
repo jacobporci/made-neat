@@ -1,7 +1,7 @@
 import styles from "./layout.module.css";
 import Head from "next/head";
 import Image from "next/image";
-import { PropsWithChildren, ReactElement } from "react";
+import { ReactElement } from "react";
 
 export default function Layout({ children }: { children: ReactElement }) {
   return (
