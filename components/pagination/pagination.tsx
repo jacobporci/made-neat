@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { QueryParams } from "../../pages/types";
 import styles from "./pagination.module.css";
 
