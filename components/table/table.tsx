@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StrippedArticle } from "../../pages/types";
+import { StrippedArticle } from "../../utils/types";
 import styles from "./table.module.css";
 
 type SortHeaderProps = {

@@ -1,4 +1,4 @@
-import { QueryParams } from "../../pages/types";
+import { QueryParams } from "../../utils/types";
 import styles from "./search.module.css";
 
 type Props = {

@@ -1,4 +1,4 @@
-import { Articles, QueryParams } from "../pages/types";
+import { Articles, QueryParams } from "./types";
 import { API_KEY } from "./constants";
 
 export const getArticles = async ({

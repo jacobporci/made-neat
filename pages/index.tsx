@@ -10,7 +10,7 @@ import {
   DEFAULT_SEARCH_KEY,
 } from "../utils/constants";
 import { getArticles } from "../utils/utils";
-import { QueryParams, StrippedArticle } from "./types";
+import { QueryParams, StrippedArticle } from "../utils/types";
 
 type Props = {
   articles: Array<StrippedArticle>;

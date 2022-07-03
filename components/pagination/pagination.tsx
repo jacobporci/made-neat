@@ -1,4 +1,4 @@
-import { QueryParams } from "../../pages/types";
+import { QueryParams } from "../../utils/types";
 import styles from "./pagination.module.css";
 
 const DEFAULT_OPTIONS = [10, 20, 30, 40, 50];
