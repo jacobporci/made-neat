@@ -37,7 +37,7 @@ export default function Table({ items }: Props) {
   return (
     <table className={styles.table}>
       <thead>
-        <tr>
+        <tr className={styles.header}>
           {items.length ? (
             Object.keys(items[0]).map((item) => {
               const isSorted = sortKey === item;
@@ -61,9 +61,12 @@ export default function Table({ items }: Props) {
                       alignItems: "center",
                     }}
                   >
-                    {`${item} ${
-                      isSorted ? (sortOrder === "asc" ? " ▼" : " ▲") : ""
-                    }`}
+                    {item}
+
+                    <div className={styles.sorter}>
+                      {" "}
+                      {isSorted ? (sortOrder === "asc" ? " ▼" : " ▲") : ""}
+                    </div>
                   </button>
                 </th>
               );
@@ -77,9 +80,9 @@ export default function Table({ items }: Props) {
         {sortedItems?.map(({ author, title, publishedAt }) => {
           return (
             <tr className={styles.rows} key={publishedAt}>
-              <td>{author || "Anonymous"}</td>
-              <td>{title}</td>
-              <td>{publishedAt}</td>
+              <td className={styles.cell}>{author || "Anonymous"}</td>
+              <td className={styles.cell}>{title}</td>
+              <td className={styles.cell}>{publishedAt}</td>
             </tr>
           );
         })}

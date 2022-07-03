@@ -2,6 +2,14 @@
   width: 100%;
   max-width: 100%;
   margin-bottom: 1rem;
+	border-collapse: collapse;
+}
+
+.header {
+	background-color: grey;
+	color: white;
+	height: 2rem;
+	border: 1px solid black;
 }
 
 .headers {
@@ -14,9 +22,19 @@
 	cursor: pointer;
 	outline: inherit;
 
-	height: 2rem;
+	width: 100%;
+}
+
+.sorter {
+	display: flex;
+	flex: 1;
+	justify-content: flex-end;
 }
 
 .rows {
 	height: 2rem;
+}
+
+.cell {
+	border: 1px solid black;
 }
