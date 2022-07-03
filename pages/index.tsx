@@ -8,6 +8,8 @@ import styles from "../styles/Home.module.css";
 
 const DEFAULT_PAGE_SIZE = 10;
 const DEFAULT_PAGE = 1;
+const DEFAULT_SEARCH_KEY = "Apple";
+const API_KEY = "8171aba6f9fc48a29fada6fead638dce";
 
 type Articles = {
   source: Object;
@@ -32,20 +34,23 @@ type Props = {
 type QueryParams = {
   page: number;
   pageSize?: number;
+  searchKey: string;
 };
 
-const getArticles = async ({ page, pageSize }: QueryParams) => {
-  const reponse = await fetch(
-    `https://newsapi.org/v2/everything?apiKey=bf84d7431fa646c8922231ab4935ad89&q=Apple&sortBy=popularity&page=${page}&pageSize=${pageSize}`
+const getArticles = async ({ page, pageSize, searchKey }: QueryParams) => {
+  const response = await fetch(
+    `https://newsapi.org/v2/everything?apiKey=${API_KEY}&searchIn=title&q=${searchKey}&sortBy=popularity&page=${page}&pageSize=${pageSize}`
   );
-  const { articles } = await reponse.json();
-  const strippedOutArticles = articles.map(
-    ({ author, title, publishedAt }: Articles) => ({
-      author,
-      title,
-      publishedAt,
-    })
-  );
+  const data = await response.json();
+  console.log({ data });
+  const { articles } = data;
+  const strippedOutArticles = articles
+    ? articles.map(({ author, title, publishedAt }: Articles) => ({
+        author,
+        title,
+        publishedAt,
+      }))
+    : [];
 
   return strippedOutArticles;
 };
@@ -54,15 +59,23 @@ const Home: NextPage<Props> = (props) => {
   const [articles, setArticles] = useState(props.articles);
   const [currPage, setCurrPage] = useState(DEFAULT_PAGE);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+  const [searchKey, setsearchKey] = useState(DEFAULT_SEARCH_KEY);
 
   const handlePageChange = async (page: number) => {
-    const articles = await getArticles({ page, pageSize });
+    const articles = await getArticles({ page, pageSize, searchKey });
     setArticles(articles);
     setCurrPage(page);
   };
 
   const handlePageSizeChange = async (pageSize: number) => {
-    const articles = await getArticles({ page: currPage, pageSize });
+    const articles = await getArticles({ page: currPage, pageSize, searchKey });
+    setArticles(articles);
+    setPageSize(pageSize);
+  };
+
+  const hanldeSearch = async (searchKey: string) => {
+    console.log({ searchKey });
+    const articles = await getArticles({ page: currPage, pageSize, searchKey });
     setArticles(articles);
     setPageSize(pageSize);
   };
@@ -75,7 +88,7 @@ const Home: NextPage<Props> = (props) => {
       </Head>
 
       <main className={styles.main}>
-        <Search />
+        <Search onSearch={hanldeSearch} searchKey={searchKey} />
         <Table items={articles} />
         <Pagination
           currPage={currPage}
@@ -93,6 +106,7 @@ export const getStaticProps = async () => {
       articles: await getArticles({
         page: DEFAULT_PAGE,
         pageSize: DEFAULT_PAGE_SIZE,
+        searchKey: DEFAULT_SEARCH_KEY,
       }),
     },
   };
